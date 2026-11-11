@@ -3,7 +3,6 @@ import JourneyHeader from './JourneyHeader';
 
 export default function JourneyViewer() {
   const videoRef = useRef(null);
-  const bgVideoRef = useRef(null);
   const containerRef = useRef(null);
 
   // Device orientation / screen detection
@@ -14,9 +13,9 @@ export default function JourneyViewer() {
 
   // Playback State
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(57.5);
+  const [duration, setDuration] = useState(57.21);
 
-  // Monitor resize & orientation changes to choose the ideal video format
+  // Monitor resize & orientation changes to choose the ideal format
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768 || window.innerHeight > window.innerWidth;
@@ -42,9 +41,8 @@ export default function JourneyViewer() {
       if (video.duration) {
         setDuration(video.duration);
       }
-      // If we switched formats, restore current time
       if (currentTime > 0) {
-        video.currentTime = Math.min(currentTime, video.duration || 57.5);
+        video.currentTime = Math.min(currentTime, video.duration || 57.21);
       }
       video.play().catch(() => {
         video.muted = true;
@@ -53,13 +51,7 @@ export default function JourneyViewer() {
     };
 
     const handleTimeUpdate = () => {
-      const cur = video.currentTime;
-      setCurrentTime(cur);
-
-      // Keep ambient background in sync
-      if (bgVideoRef.current && Math.abs(bgVideoRef.current.currentTime - cur) > 0.4) {
-        bgVideoRef.current.currentTime = cur;
-      }
+      setCurrentTime(video.currentTime);
     };
 
     video.addEventListener('loadedmetadata', handleLoadedMetadata);
@@ -70,9 +62,6 @@ export default function JourneyViewer() {
       video.muted = true;
       video.play().catch(() => {});
     });
-    if (bgVideoRef.current) {
-      bgVideoRef.current.play().catch(() => {});
-    }
 
     return () => {
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
@@ -83,11 +72,8 @@ export default function JourneyViewer() {
   const handleSeekToLandmark = useCallback((targetTime) => {
     const video = videoRef.current;
     if (!video) return;
-    const clamped = Math.max(0, Math.min(video.duration || 57.5, targetTime));
+    const clamped = Math.max(0, Math.min(video.duration || 57.21, targetTime));
     video.currentTime = clamped;
-    if (bgVideoRef.current) {
-      bgVideoRef.current.currentTime = clamped;
-    }
     setCurrentTime(clamped);
   }, []);
 
@@ -97,24 +83,9 @@ export default function JourneyViewer() {
       className="relative w-screen h-[100dvh] overflow-hidden bg-black select-none flex items-center justify-center"
     >
       {/* 
-        Ambient Scene Glow on Mobile: 
-        Subtle aura around non-standard phone screens (e.g. 19.5:9 or notch areas)
-      */}
-      <video
-        ref={bgVideoRef}
-        src={videoSrc}
-        autoPlay
-        loop
-        muted
-        playsInline
-        aria-hidden="true"
-        className="absolute inset-0 w-full h-full object-cover blur-3xl opacity-35 scale-110 pointer-events-none md:hidden"
-      />
-
-      {/* 
-        True Dual-Format Container:
-        - Mobile Phones: 9:16 vertical full screen, zero black bars on top & bottom, 100% visible typography
-        - Laptops & Desktops: 16:9 widescreen cinematic theatre
+        Dual-Format Presentation:
+        - Mobile Phones: Native 9:16 vertical cinema with zero black bars and 100% visible authentic typography
+        - Laptops & Desktops: 16:9 widescreen cinema
       */}
       <div
         className={`relative z-10 overflow-hidden flex flex-col items-center justify-center select-none shadow-2xl ${
@@ -132,8 +103,8 @@ export default function JourneyViewer() {
 
         {/* 
           Main Video Element:
-          - Phone: Fills native 9:16 vertical screen with uncropped text & landmarks
-          - Laptop: Fills native 16:9 widescreen cinema
+          - No bottom player bar
+          - Autoplays silently
         */}
         <div className="relative w-full h-full flex items-center justify-center">
           <video
@@ -145,9 +116,7 @@ export default function JourneyViewer() {
             muted
             playsInline
             preload="auto"
-            className={`w-full h-full pointer-events-none ${
-              isMobile ? 'object-cover' : 'object-contain'
-            }`}
+            className="w-full h-full object-cover md:object-contain pointer-events-none"
           />
         </div>
       </div>
