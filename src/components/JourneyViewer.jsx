@@ -6,11 +6,34 @@ export default function JourneyViewer() {
   const bgVideoRef = useRef(null);
   const containerRef = useRef(null);
 
+  // Device orientation / screen detection
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth < 768 || window.innerHeight > window.innerWidth;
+  });
+
   // Playback State
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(57.21);
+  const [duration, setDuration] = useState(57.5);
 
-  // Sync video duration and time
+  // Monitor resize & orientation changes to choose the ideal video format
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768 || window.innerHeight > window.innerWidth;
+      setIsMobile(mobile);
+    };
+
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+    };
+  }, []);
+
+  const videoSrc = isMobile ? '/journey_mobile_9x16.mp4' : '/journey_full_sequence.mp4';
+
+  // Sync video duration, time, and preserve position across src change
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -19,6 +42,14 @@ export default function JourneyViewer() {
       if (video.duration) {
         setDuration(video.duration);
       }
+      // If we switched formats, restore current time
+      if (currentTime > 0) {
+        video.currentTime = Math.min(currentTime, video.duration || 57.5);
+      }
+      video.play().catch(() => {
+        video.muted = true;
+        video.play().catch(() => {});
+      });
     };
 
     const handleTimeUpdate = () => {
@@ -47,12 +78,12 @@ export default function JourneyViewer() {
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
       video.removeEventListener('timeupdate', handleTimeUpdate);
     };
-  }, []);
+  }, [videoSrc]);
 
   const handleSeekToLandmark = useCallback((targetTime) => {
     const video = videoRef.current;
     if (!video) return;
-    const clamped = Math.max(0, Math.min(video.duration || 57.21, targetTime));
+    const clamped = Math.max(0, Math.min(video.duration || 57.5, targetTime));
     video.currentTime = clamped;
     if (bgVideoRef.current) {
       bgVideoRef.current.currentTime = clamped;
@@ -67,11 +98,11 @@ export default function JourneyViewer() {
     >
       {/* 
         Ambient Scene Glow on Mobile: 
-        Fills the vertical phone screen with dynamic scene colors/lighting (no dead black space)
+        Subtle aura around non-standard phone screens (e.g. 19.5:9 or notch areas)
       */}
       <video
         ref={bgVideoRef}
-        src="/journey_full_sequence.mp4"
+        src={videoSrc}
         autoPlay
         loop
         muted
@@ -81,12 +112,16 @@ export default function JourneyViewer() {
       />
 
       {/* 
-        Fully Device-Compatible Frame:
-        - Mobile: Full width, object-contain ensures 100% of text and scenes are completely visible & uncropped
-        - Laptop/Desktop: Centered 16:9 cinema widescreen frame
+        True Dual-Format Container:
+        - Mobile Phones: 9:16 vertical full screen, zero black bars on top & bottom, 100% visible typography
+        - Laptops & Desktops: 16:9 widescreen cinematic theatre
       */}
       <div
-        className="relative z-10 overflow-hidden flex flex-col items-center justify-center select-none w-full h-full md:aspect-[16/9] md:w-[min(100vw,calc(100vh*16/9))] md:h-[min(100vh,calc(100vw*9/16))] md:max-w-[100vw] md:max-h-[100vh]"
+        className={`relative z-10 overflow-hidden flex flex-col items-center justify-center select-none shadow-2xl ${
+          isMobile
+            ? 'w-full h-full max-w-[calc(100dvh*9/16)] aspect-[9/16]'
+            : 'aspect-[16/9] w-[min(100vw,calc(100vh*16/9))] h-[min(100vh,calc(100vw*9/16))] max-w-[100vw] max-h-[100vh]'
+        }`}
       >
         {/* Minimal Clickable Top Progress Line & Timestamps */}
         <JourneyHeader
@@ -96,20 +131,23 @@ export default function JourneyViewer() {
         />
 
         {/* 
-          Main 1080p Full HD Video:
-          - object-contain: 100% text compatibility on every phone and laptop
-          - Zero text cutting, zero blurriness, razor-sharp details
+          Main Video Element:
+          - Phone: Fills native 9:16 vertical screen with uncropped text & landmarks
+          - Laptop: Fills native 16:9 widescreen cinema
         */}
         <div className="relative w-full h-full flex items-center justify-center">
           <video
             ref={videoRef}
-            src="/journey_full_sequence.mp4"
+            key={videoSrc}
+            src={videoSrc}
             autoPlay
             loop
             muted
             playsInline
             preload="auto"
-            className="w-full h-full object-contain pointer-events-none"
+            className={`w-full h-full pointer-events-none ${
+              isMobile ? 'object-cover' : 'object-contain'
+            }`}
           />
         </div>
       </div>
