@@ -52,8 +52,8 @@ export default function JourneyHeader({
       </div>
 
       {/* Discreet Minimal Timestamp Landmarks at Top Center */}
-      <div className="absolute top-2.5 inset-x-0 z-40 flex items-center justify-center px-3 pointer-events-none select-none">
-        <div className="pointer-events-auto flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/35 hover:bg-black/50 backdrop-blur-md border border-white/10 shadow-lg overflow-x-auto no-scrollbar max-w-full transition-all">
+      <div className="absolute top-2 inset-x-0 z-40 flex items-center justify-center px-2 pointer-events-none select-none">
+        <div className="pointer-events-auto flex items-center gap-1 md:gap-1.5 px-2.5 md:px-3 py-1 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/10 shadow-lg overflow-x-auto no-scrollbar max-w-[96%] md:max-w-full transition-all">
           {LANDMARKS.map((lm, idx) => {
             const nextTime = LANDMARKS[idx + 1]?.time || duration;
             const isCurrent = currentTime >= lm.time && currentTime < nextTime;
@@ -65,14 +65,14 @@ export default function JourneyHeader({
                   e.stopPropagation();
                   onSeekToLandmark(lm.time);
                 }}
-                className={`flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] md:text-[11px] font-mono transition-all flex items-center gap-1 ${
+                className={`flex-shrink-0 px-2 py-0.5 rounded-full text-[9px] md:text-[11px] font-mono transition-all flex items-center gap-1 ${
                   isCurrent
                     ? 'bg-white/30 text-white font-bold shadow-sm'
                     : 'text-white/60 hover:text-white hover:bg-white/10'
                 }`}
                 title={`Jump to ${lm.name} (${formatTime(lm.time)})`}
               >
-                <span className="opacity-50 text-[9px]">{formatTime(lm.time)}</span>
+                <span className="opacity-50 text-[8px] md:text-[9px]">{formatTime(lm.time)}</span>
                 <span>{lm.name}</span>
               </button>
             );

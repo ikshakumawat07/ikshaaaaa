@@ -54,11 +54,11 @@ export default function JourneyViewer() {
     >
       {/* 
         Responsive Container:
-        - Mobile/Phone: w-full h-[100dvh] (fills the entire screen in full vertical size)
-        - Laptop/Desktop (md:): 16:9 cinema aspect ratio centered
+        - Mobile/Phone: Strict 9:16 vertical reel aspect ratio
+        - Laptop/Desktop (md:): Strict 16:9 widescreen cinema aspect ratio
       */}
       <div
-        className="relative overflow-hidden bg-black shadow-2xl flex items-center justify-center select-none w-full h-[100dvh] md:w-[min(100vw,calc(100vh*16/9))] md:h-[min(100vh,calc(100vw*9/16))] md:aspect-[16/9] md:max-w-[100vw] md:max-h-[100vh]"
+        className="relative overflow-hidden bg-black shadow-2xl flex items-center justify-center select-none aspect-[9/16] w-[min(100vw,calc(100dvh*9/16))] h-[min(100dvh,calc(100vw*16/9))] max-w-[100vw] max-h-[100dvh] md:aspect-[16/9] md:w-[min(100vw,calc(100vh*16/9))] md:h-[min(100vh,calc(100vw*9/16))] md:max-w-[100vw] md:max-h-[100vh]"
       >
         {/* Minimal Clickable Top Progress Line & Timestamps */}
         <JourneyHeader
@@ -67,7 +67,7 @@ export default function JourneyViewer() {
           onSeekToLandmark={handleSeekToLandmark}
         />
 
-        {/* Pure Continuous Autoplay Video: Full size object-cover on phone, object-contain on 16:9 laptop */}
+        {/* Video: 9:16 vertical full experience on phone, 16:9 widescreen on laptop */}
         <video
           ref={videoRef}
           src="/journey_full_sequence.mp4"
