@@ -5,22 +5,21 @@ export default function JourneyViewer() {
   const videoRef = useRef(null);
   const containerRef = useRef(null);
 
-  // Determine whether to show portrait view (phone) or landscape view (laptop/desktop)
-  const getIsMobile = () => {
+  // Check whether device is currently in portrait orientation
+  const checkPortrait = () => {
     if (typeof window === 'undefined') return false;
-    const isPortrait = window.matchMedia('(orientation: portrait)').matches || window.innerHeight > window.innerWidth;
-    const isMobileWidth = window.innerWidth < 768;
-    return isPortrait || isMobileWidth;
+    return window.innerHeight > window.innerWidth;
   };
 
-  const [isMobile, setIsMobile] = useState(getIsMobile);
+  const [isPortrait, setIsPortrait] = useState(checkPortrait);
+  const [rotationAngle, setRotationAngle] = useState(90); // 90 degrees tilted on phone
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(57.21);
 
-  // Monitor resize & orientation changes so phone opens in portrait view and laptop in full landscape view
+  // Monitor resize & orientation changes
   useEffect(() => {
     const handleOrientationChange = () => {
-      setIsMobile(getIsMobile());
+      setIsPortrait(checkPortrait());
     };
 
     window.addEventListener('resize', handleOrientationChange);
@@ -40,10 +39,7 @@ export default function JourneyViewer() {
     };
   }, []);
 
-  // Phone loads dedicated 9:16 portrait video; Laptop loads full 16:9 widescreen video
-  const videoSrc = isMobile ? '/journey_mobile_9x16.mp4' : '/journey_full_sequence.mp4';
-
-  // Sync video duration, time, and preserve playback position across view switches
+  // Sync video duration and time
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -51,9 +47,6 @@ export default function JourneyViewer() {
     const handleLoadedMetadata = () => {
       if (video.duration) {
         setDuration(video.duration);
-      }
-      if (currentTime > 0) {
-        video.currentTime = Math.min(currentTime, video.duration || 57.21);
       }
       video.play().catch(() => {
         video.muted = true;
@@ -78,7 +71,7 @@ export default function JourneyViewer() {
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
       video.removeEventListener('timeupdate', handleTimeUpdate);
     };
-  }, [videoSrc]);
+  }, []);
 
   const handleSeekToLandmark = useCallback((targetTime) => {
     const video = videoRef.current;
@@ -94,11 +87,25 @@ export default function JourneyViewer() {
       className="relative w-screen h-[100dvh] overflow-hidden bg-black select-none flex items-center justify-center"
     >
       {/* 
-        Full Viewport Container:
-        - Phone: Opens in full portrait view (fills 100% of the vertical phone screen)
-        - Laptop: Opens in full landscape view (fills 100% of the widescreen monitor)
+        Max View Presentation:
+        - On phone (portrait): Played 90 degrees tilted to fill the screen in its maximum view
+        - On laptop/desktop (landscape): Plays in edge-to-edge max landscape view
       */}
-      <div className="relative z-10 w-full h-full flex flex-col items-center justify-center select-none overflow-hidden">
+      <div
+        className={`overflow-hidden flex flex-col items-center justify-center select-none ${
+          isPortrait
+            ? 'absolute top-1/2 left-1/2 w-[100dvh] h-[100vw]'
+            : 'relative w-full h-full'
+        }`}
+        style={
+          isPortrait
+            ? {
+                transform: `translate(-50%, -50%) rotate(${rotationAngle}deg)`,
+                transformOrigin: 'center center',
+              }
+            : undefined
+        }
+      >
         {/* Minimal Clickable Top Progress Line & Timestamps */}
         <JourneyHeader
           currentTime={currentTime}
@@ -107,15 +114,14 @@ export default function JourneyViewer() {
         />
 
         {/* 
-          Main Video Player:
-          - Phone: Fills entire portrait screen (object-cover) with zero black bars
-          - Laptop: Fills entire landscape screen (object-cover) in full cinematic landscape view
+          Main 1080p HD Video:
+          - Plays the full original sequence in full screen max view
+          - Zero black bars; razor sharp 1080p quality
         */}
         <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
           <video
             ref={videoRef}
-            key={videoSrc}
-            src={videoSrc}
+            src="/journey_full_sequence.mp4"
             autoPlay
             loop
             muted
@@ -124,6 +130,23 @@ export default function JourneyViewer() {
             className="w-full h-full object-cover pointer-events-none"
           />
         </div>
+
+        {/* Discreet Flip Button for Phone Orientation (allows 90° or 270° tilt) */}
+        {isPortrait && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setRotationAngle((prev) => (prev === 90 ? -90 : 90));
+            }}
+            className="absolute bottom-3 right-4 z-50 px-2.5 py-1 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur-md border border-white/20 text-white/70 hover:text-white text-[10px] font-mono flex items-center gap-1 transition-all"
+            title="Flip tilt direction"
+          >
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span>Flip 180°</span>
+          </button>
+        )}
       </div>
     </div>
   );
