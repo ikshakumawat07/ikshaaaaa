@@ -15,6 +15,13 @@ export default function JourneyViewer() {
   const [rotationAngle, setRotationAngle] = useState(90); // 90 degrees tilted on phone
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(60.82);
+  const [is2x, setIs2x] = useState(false);
+
+  const longPressTimerRef = useRef(null);
+  const isLongPressActiveRef = useRef(false);
+  const pointerStartPosRef = useRef({ x: 0, y: 0 });
+  const wasPausedBeforeLongPressRef = useRef(false);
+  const preventClickRef = useRef(false);
 
   // Monitor resize & orientation changes
   useEffect(() => {
@@ -81,8 +88,99 @@ export default function JourneyViewer() {
     setCurrentTime(clamped);
   }, []);
 
+  // Long-press detection to trigger 2x playback speed
+  const handlePointerDown = useCallback((e) => {
+    // Only primary button (left click or touch)
+    if (e.button !== undefined && e.button !== 0) return;
+
+    pointerStartPosRef.current = { x: e.clientX, y: e.clientY };
+    isLongPressActiveRef.current = false;
+    preventClickRef.current = false;
+
+    const video = videoRef.current;
+    if (!video) return;
+
+    wasPausedBeforeLongPressRef.current = video.paused;
+
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+    }
+
+    // Trigger 2x after holding down for 220ms
+    longPressTimerRef.current = setTimeout(() => {
+      isLongPressActiveRef.current = true;
+      preventClickRef.current = true;
+      setIs2x(true);
+      if (videoRef.current) {
+        videoRef.current.playbackRate = 2.0;
+        if (videoRef.current.paused) {
+          videoRef.current.play().catch(() => {});
+        }
+      }
+    }, 220);
+  }, []);
+
+  const handlePointerMove = useCallback((e) => {
+    // If moved more than 15px before long-press activates, cancel the timer
+    if (!isLongPressActiveRef.current && longPressTimerRef.current) {
+      const dx = Math.abs(e.clientX - pointerStartPosRef.current.x);
+      const dy = Math.abs(e.clientY - pointerStartPosRef.current.y);
+      if (dx > 15 || dy > 15) {
+        clearTimeout(longPressTimerRef.current);
+        longPressTimerRef.current = null;
+      }
+    }
+  }, []);
+
+  const handlePointerUp = useCallback(() => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+
+    if (isLongPressActiveRef.current) {
+      isLongPressActiveRef.current = false;
+      setIs2x(false);
+      if (videoRef.current) {
+        videoRef.current.playbackRate = 1.0;
+        if (wasPausedBeforeLongPressRef.current) {
+          videoRef.current.pause();
+        }
+      }
+      // Swallow trailing click event after long press
+      preventClickRef.current = true;
+      setTimeout(() => {
+        preventClickRef.current = false;
+      }, 150);
+    }
+  }, []);
+
+  const handlePointerCancel = useCallback(() => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
+    }
+
+    if (isLongPressActiveRef.current) {
+      isLongPressActiveRef.current = false;
+      setIs2x(false);
+      if (videoRef.current) {
+        videoRef.current.playbackRate = 1.0;
+        if (wasPausedBeforeLongPressRef.current) {
+          videoRef.current.pause();
+        }
+      }
+    }
+    preventClickRef.current = false;
+  }, []);
+
   // Seamless invisible tap/click to pause and resume playback
   const togglePlay = useCallback(() => {
+    if (preventClickRef.current) {
+      preventClickRef.current = false;
+      return;
+    }
+
     const video = videoRef.current;
     if (!video) return;
 
@@ -103,12 +201,18 @@ export default function JourneyViewer() {
   return (
     <div
       ref={containerRef}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={handlePointerCancel}
+      onContextMenu={(e) => e.preventDefault()}
       onClick={togglePlay}
       onKeyDown={handleKeyDown}
       tabIndex={0}
       role="button"
       aria-label="Toggle playback"
-      className="relative w-screen h-[100dvh] overflow-hidden bg-black select-none flex items-center justify-center cursor-pointer outline-none"
+      style={{ WebkitTouchCallout: 'none', userSelect: 'none' }}
+      className="relative w-screen h-[100dvh] overflow-hidden bg-black select-none flex items-center justify-center cursor-pointer outline-none touch-none"
     >
       {/* 
         Max View Presentation:
@@ -137,6 +241,18 @@ export default function JourneyViewer() {
           onSeekToLandmark={handleSeekToLandmark}
         />
 
+        {/* Discreet 2x Speed Badge - smoothly visible only while long-pressing */}
+        {is2x && (
+          <div className="absolute top-12 md:top-14 inset-x-0 z-50 flex items-center justify-center pointer-events-none transition-all">
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/75 hover:bg-black/85 backdrop-blur-md border border-white/20 text-white shadow-2xl font-mono text-xs tracking-wider">
+              <svg className="w-3.5 h-3.5 fill-current text-white/90" viewBox="0 0 24 24">
+                <path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/>
+              </svg>
+              <span className="font-bold">2× Speed</span>
+            </div>
+          </div>
+        )}
+
         {/* 
           Main 1080p HD Video:
           - Plays the full original sequence in full screen max view
@@ -158,6 +274,7 @@ export default function JourneyViewer() {
         {/* Discreet Flip Button for Phone Orientation (allows 90° or 270° tilt) */}
         {isPortrait && (
           <button
+            onPointerDown={(e) => e.stopPropagation()}
             onClick={(e) => {
               e.stopPropagation();
               setRotationAngle((prev) => (prev === 90 ? -90 : 90));
