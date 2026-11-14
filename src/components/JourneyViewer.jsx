@@ -14,7 +14,7 @@ export default function JourneyViewer() {
   const [isPortrait, setIsPortrait] = useState(checkPortrait);
   const [rotationAngle, setRotationAngle] = useState(90); // 90 degrees tilted on phone
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(60.82);
+  const [duration, setDuration] = useState(51.42);
 
   // Monitor resize & orientation changes
   useEffect(() => {
@@ -121,7 +121,7 @@ export default function JourneyViewer() {
         <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
           <video
             ref={videoRef}
-            src="/journey_full_sequence.mp4?v=paris_scene_v7"
+            src="/journey_full_sequence.mp4?v=no_louvre_v8"
             autoPlay
             loop
             muted
