@@ -13,15 +13,20 @@ export default function ConnectSection({ onBackToTop }) {
 
   return (
     <div className="relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-end select-none bg-black">
-      {/* Background Image: Pure sky & swing artwork without heavy dark overlays */}
+      {/* Background Image: Responsive artwork for Phone vs Desktop */}
       <div className="absolute inset-0 w-full h-full">
-        <img
-          src="/connect_bg.jpg"
-          alt="Sky with swing artwork"
-          className="w-full h-full object-cover object-left md:object-center"
-        />
+        <picture className="w-full h-full">
+          {/* Mobile phone portrait screens use the dedicated full vertical image */}
+          <source media="(max-width: 767px)" srcSet="/connect_bg_mobile.jpg" />
+          {/* Desktop/tablet & landscape screens use the original full landscape artwork */}
+          <img
+            src="/connect_bg.jpg"
+            alt="Sky with swing artwork"
+            className="w-full h-full object-cover object-center"
+          />
+        </picture>
         {/* Very subtle transparent vignette to keep text crisp against bright clouds */}
-        <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-l from-black/40 via-black/10 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-l from-black/45 via-black/15 to-transparent pointer-events-none" />
       </div>
 
       {/* Right-Hand Side: 100% Transparent, Attractive & Modern Content */}
