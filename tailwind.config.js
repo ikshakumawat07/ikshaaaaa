@@ -17,6 +17,8 @@ export default {
       fontFamily: {
         'display': ['Playfair Display', 'serif'],
         'body': ['Inter', 'sans-serif'],
+        'curly': ['JustLikeHeaven', 'Comfortaa', 'cursive', 'sans-serif'],
+        'pearl': ['TanPearl', 'Playfair Display', 'Georgia', 'serif'],
       },
       backgroundImage: {
         'gradient-sunset': 'linear-gradient(135deg, #21112F 0%, #503078 30%, #B9A2E8 60%, #F2B7CB 80%, #F4A16C 100%)',
