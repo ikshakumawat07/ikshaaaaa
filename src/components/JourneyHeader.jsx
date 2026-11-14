@@ -4,9 +4,10 @@ export const LANDMARKS = [
   { id: 'ticket', name: 'Ticket', time: 0 },
   { id: 'flight', name: 'Flight', time: 3 },
   { id: 'paris', name: 'Paris', time: 13 },
-  { id: 'seine', name: 'Seine', time: 23 },
-  { id: 'palace', name: 'Palace', time: 32 },
-  { id: 'aurevoir', name: 'Au Revoir', time: 41 },
+  { id: 'pontdesarts', name: 'Pont des Arts', time: 23 },
+  { id: 'seine', name: 'Seine', time: 32 },
+  { id: 'palace', name: 'Palace', time: 41 },
+  { id: 'aurevoir', name: 'Au Revoir', time: 51 },
 ];
 
 const formatTime = (seconds) => {

@@ -14,7 +14,7 @@ export default function JourneyViewer() {
   const [isPortrait, setIsPortrait] = useState(checkPortrait);
   const [rotationAngle, setRotationAngle] = useState(90); // 90 degrees tilted on phone
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(51.42);
+  const [duration, setDuration] = useState(60.82);
 
   // Monitor resize & orientation changes
   useEffect(() => {
@@ -76,7 +76,7 @@ export default function JourneyViewer() {
   const handleSeekToLandmark = useCallback((targetTime) => {
     const video = videoRef.current;
     if (!video) return;
-    const clamped = Math.max(0, Math.min(video.duration || 57.21, targetTime));
+    const clamped = Math.max(0, Math.min(video.duration || 60.82, targetTime));
     video.currentTime = clamped;
     setCurrentTime(clamped);
   }, []);
@@ -121,7 +121,7 @@ export default function JourneyViewer() {
         <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
           <video
             ref={videoRef}
-            src="/journey_full_sequence.mp4?v=no_louvre_v8"
+            src="/journey_full_sequence.mp4?v=pont_des_arts_v9"
             autoPlay
             loop
             muted
