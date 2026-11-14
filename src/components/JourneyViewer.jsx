@@ -121,7 +121,7 @@ export default function JourneyViewer() {
         <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
           <video
             ref={videoRef}
-            src="/journey_full_sequence.mp4?v=clean"
+            src="/journey_full_sequence.mp4?v=3"
             autoPlay
             loop
             muted
