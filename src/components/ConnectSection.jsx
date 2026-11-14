@@ -12,25 +12,20 @@ export default function ConnectSection({ onBackToTop }) {
   };
 
   return (
-    <div className="relative w-full min-h-[100dvh] overflow-hidden flex items-center justify-end select-none bg-black">
-      {/* Background Image: Responsive artwork for Phone vs Desktop */}
+    <div className="relative w-full h-full min-h-full overflow-hidden flex items-center justify-end select-none bg-black">
+      {/* Background Image: Pure horizontal landscape artwork matching the video */}
       <div className="absolute inset-0 w-full h-full">
-        <picture className="w-full h-full">
-          {/* Mobile phone portrait screens use the dedicated full vertical image */}
-          <source media="(max-width: 767px)" srcSet="/connect_bg_mobile.jpg" />
-          {/* Desktop/tablet & landscape screens use the original full landscape artwork */}
-          <img
-            src="/connect_bg.jpg"
-            alt="Sky with swing artwork"
-            className="w-full h-full object-cover object-center"
-          />
-        </picture>
+        <img
+          src="/connect_bg.jpg"
+          alt="Sky with swing artwork"
+          className="w-full h-full object-cover object-left md:object-center"
+        />
         {/* Very subtle transparent vignette to keep text crisp against bright clouds */}
-        <div className="absolute inset-0 bg-gradient-to-t md:bg-gradient-to-l from-black/45 via-black/15 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-l from-black/45 via-black/15 to-transparent pointer-events-none" />
       </div>
 
       {/* Right-Hand Side: 100% Transparent, Attractive & Modern Content */}
-      <div className="relative z-10 w-full md:w-[54%] lg:w-[46%] xl:w-[42%] px-6 sm:px-10 md:px-12 lg:px-16 py-12 flex flex-col justify-center items-start md:items-end text-left md:text-right">
+      <div className="relative z-10 w-full sm:w-[58%] md:w-[50%] lg:w-[44%] px-6 sm:px-8 md:px-12 py-8 flex flex-col justify-center items-start md:items-end text-left md:text-right">
         <motion.div
           initial={{ opacity: 0, x: 40 }}
           whileInView={{ opacity: 1, x: 0 }}
