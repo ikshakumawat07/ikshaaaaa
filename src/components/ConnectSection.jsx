@@ -4,6 +4,9 @@ import { Mail, Github, Linkedin, Phone, ArrowUp, Copy, Check, ExternalLink, Hear
 
 export default function ConnectSection({ onBackToTop }) {
   const [copied, setCopied] = useState(false);
+  const [fontChoice, setFontChoice] = useState('poppins'); // 'poppins' or 'times'
+
+  const fontClass = fontChoice === 'poppins' ? 'font-poppins' : 'font-times';
 
   const handleCopy = (text) => {
     navigator.clipboard?.writeText(text);
@@ -39,19 +42,50 @@ export default function ConnectSection({ onBackToTop }) {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-6"
+            className="mb-5"
           >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-pink-200 text-xs font-curly tracking-wide mb-3 shadow-sm">
-              <Heart className="w-3.5 h-3.5 fill-pink-300 text-pink-300 animate-pulse" />
-              <span>get in touch</span>
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-pink-200 text-xs font-curly tracking-wide shadow-sm">
+                <Heart className="w-3.5 h-3.5 fill-pink-300 text-pink-300 animate-pulse" />
+                <span>get in touch</span>
+              </div>
+
+              {/* Font Switcher for Contact Details (Poppins / Times New Roman) */}
+              <div className="inline-flex items-center p-0.5 rounded-full bg-black/40 border border-[#e8dcbf]/30 backdrop-blur-md text-[11px]">
+                <button
+                  type="button"
+                  onClick={() => setFontChoice('poppins')}
+                  className={`px-2.5 py-0.5 rounded-full transition-all cursor-pointer font-poppins ${
+                    fontChoice === 'poppins'
+                      ? 'bg-[#faede0] text-[#162e20] font-semibold shadow-sm'
+                      : 'text-[#faede0]/70 hover:text-[#faede0]'
+                  }`}
+                  title="Use Poppins font"
+                >
+                  Poppins
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFontChoice('times')}
+                  className={`px-2.5 py-0.5 rounded-full transition-all cursor-pointer font-times ${
+                    fontChoice === 'times'
+                      ? 'bg-[#faede0] text-[#162e20] font-semibold shadow-sm'
+                      : 'text-[#faede0]/70 hover:text-[#faede0]'
+                  }`}
+                  title="Use Times New Roman font"
+                >
+                  Times
+                </button>
+              </div>
             </div>
+
             <h2 className="font-curly text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-wide text-white drop-shadow-[0_3px_12px_rgba(0,0,0,0.6)] leading-tight">
               let's connect
             </h2>
             <div className="h-0.5 w-28 bg-gradient-to-r from-[#faede0] via-[#cbb998] to-transparent rounded-full mt-3 drop-shadow" />
           </motion.div>
 
-          {/* Contact Details List - Tan Pearl & Deep Forest Green Glass Theme */}
+          {/* Contact Details List - Deep Forest Green Glass Theme with Poppins / Times Font */}
           <div className="space-y-3">
             {/* MAIL */}
             <motion.a
@@ -68,10 +102,10 @@ export default function ConnectSection({ onBackToTop }) {
                   <Mail className="w-5 h-5" />
                 </div>
                 <div className="min-w-0 text-left">
-                  <div className="font-pearl text-sm sm:text-base font-semibold tracking-wider text-[#faede0] drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
+                  <div className={`${fontClass} text-xs sm:text-sm font-semibold tracking-wider text-[#faede0] uppercase drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]`}>
                     Mail :
                   </div>
-                  <div className="font-pearl text-xs sm:text-sm md:text-base text-[#f5ebd6] tracking-wide truncate drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)] group-hover:text-white transition-colors">
+                  <div className={`${fontClass} text-xs sm:text-sm md:text-base text-[#f5ebd6] tracking-wide truncate drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)] group-hover:text-white transition-colors`}>
                     IKSHAKUMAWAT2007@GMAIL.COM
                   </div>
                 </div>
@@ -96,10 +130,10 @@ export default function ConnectSection({ onBackToTop }) {
                   <Github className="w-5 h-5" />
                 </div>
                 <div className="min-w-0 text-left">
-                  <div className="font-pearl text-sm sm:text-base font-semibold tracking-wider text-[#faede0] drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
+                  <div className={`${fontClass} text-xs sm:text-sm font-semibold tracking-wider text-[#faede0] uppercase drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]`}>
                     Git :
                   </div>
-                  <div className="font-pearl text-xs sm:text-sm md:text-base text-[#f5ebd6] tracking-wide truncate drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)] group-hover:text-white transition-colors">
+                  <div className={`${fontClass} text-xs sm:text-sm md:text-base text-[#f5ebd6] tracking-wide truncate drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)] group-hover:text-white transition-colors`}>
                     https://github.com/ikshakumawat07
                   </div>
                 </div>
@@ -124,10 +158,10 @@ export default function ConnectSection({ onBackToTop }) {
                   <Linkedin className="w-5 h-5" />
                 </div>
                 <div className="min-w-0 text-left">
-                  <div className="font-pearl text-sm sm:text-base font-semibold tracking-wider text-[#faede0] drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
+                  <div className={`${fontClass} text-xs sm:text-sm font-semibold tracking-wider text-[#faede0] uppercase drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]`}>
                     LinkedIn :
                   </div>
-                  <div className="font-pearl text-xs sm:text-sm md:text-base text-[#f5ebd6] tracking-wide truncate drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)] group-hover:text-white transition-colors">
+                  <div className={`${fontClass} text-xs sm:text-sm md:text-base text-[#f5ebd6] tracking-wide truncate drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)] group-hover:text-white transition-colors`}>
                     https://www.linkedin.com/in/iksha-kumawat-aa40a2334/
                   </div>
                 </div>
@@ -151,17 +185,17 @@ export default function ConnectSection({ onBackToTop }) {
                   <Phone className="w-5 h-5" />
                 </div>
                 <div className="min-w-0 text-left">
-                  <div className="font-pearl text-sm sm:text-base font-semibold tracking-wider text-[#faede0] drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">
+                  <div className={`${fontClass} text-xs sm:text-sm font-semibold tracking-wider text-[#faede0] uppercase drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]`}>
                     Contact :
                   </div>
-                  <div className="font-pearl text-xs sm:text-sm md:text-base text-[#f5ebd6] tracking-wide drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]">
+                  <div className={`${fontClass} text-xs sm:text-sm md:text-base text-[#f5ebd6] tracking-wide drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]`}>
                     +91 6367381319
                   </div>
                 </div>
               </a>
               <button
                 onClick={() => handleCopy('+91 6367381319')}
-                className="px-3 py-1.5 rounded-xl bg-[#234530]/80 hover:bg-[#2c573d] border border-[#e8dcbf]/30 text-[#faede0] text-xs font-pearl flex items-center gap-1.5 transition-all ml-2 cursor-pointer shadow-sm"
+                className={`px-3 py-1.5 rounded-xl bg-[#234530]/80 hover:bg-[#2c573d] border border-[#e8dcbf]/30 text-[#faede0] text-xs ${fontClass} flex items-center gap-1.5 transition-all ml-2 cursor-pointer shadow-sm`}
                 title="Copy contact number"
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-300" /> : <Copy className="w-3.5 h-3.5" />}
@@ -181,7 +215,7 @@ export default function ConnectSection({ onBackToTop }) {
             >
               <button
                 onClick={onBackToTop}
-                className="px-6 py-2.5 rounded-full bg-[#162e20]/75 hover:bg-[#1a3827]/95 border border-[#e8dcbf]/35 hover:border-[#e8dcbf]/60 backdrop-blur-md text-[#faede0] font-pearl text-sm tracking-wider flex items-center gap-2 transition-all duration-300 cursor-pointer group shadow-[0_4px_20px_rgba(0,0,0,0.25)]"
+                className={`px-6 py-2.5 rounded-full bg-[#162e20]/75 hover:bg-[#1a3827]/95 border border-[#e8dcbf]/35 hover:border-[#e8dcbf]/60 backdrop-blur-md text-[#faede0] ${fontClass} text-sm tracking-wider flex items-center gap-2 transition-all duration-300 cursor-pointer group shadow-[0_4px_20px_rgba(0,0,0,0.25)]`}
               >
                 <ArrowUp className="w-4 h-4 group-hover:-translate-y-1 transition-transform" />
                 <span>Back to Journey</span>
