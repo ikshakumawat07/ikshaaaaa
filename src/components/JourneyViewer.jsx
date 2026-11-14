@@ -14,7 +14,7 @@ export default function JourneyViewer() {
   const [isPortrait, setIsPortrait] = useState(checkPortrait);
   const [rotationAngle, setRotationAngle] = useState(90); // 90 degrees tilted on phone
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(57.21);
+  const [duration, setDuration] = useState(60.82);
 
   // Monitor resize & orientation changes
   useEffect(() => {

@@ -1,14 +1,13 @@
 import { useRef } from 'react';
 
 export const LANDMARKS = [
-  { id: 'sky', name: 'Flight', time: 0 },
-  { id: 'louvre', name: 'Louvre', time: 7 },
-  { id: 'eiffel', name: 'Eiffel', time: 14 },
-  { id: 'seine', name: 'Seine', time: 24 },
-  { id: 'bridge', name: 'Bridge', time: 31 },
-  { id: 'versailles', name: 'Versailles', time: 36 },
-  { id: 'contact', name: 'Contact', time: 42 },
-  { id: 'aurevoir', name: 'Au Revoir', time: 49 },
+  { id: 'ticket', name: 'Ticket', time: 0 },
+  { id: 'flight', name: 'Flight', time: 3 },
+  { id: 'paris', name: 'Paris', time: 13 },
+  { id: 'eiffel', name: 'Eiffel', time: 23 },
+  { id: 'seine', name: 'Seine', time: 32 },
+  { id: 'palace', name: 'Palace', time: 41 },
+  { id: 'aurevoir', name: 'Au Revoir', time: 51 },
 ];
 
 const formatTime = (seconds) => {
