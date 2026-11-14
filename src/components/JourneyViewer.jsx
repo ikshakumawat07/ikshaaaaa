@@ -1,7 +1,12 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import JourneyHeader from './JourneyHeader';
 
-export default function JourneyViewer() {
+export default function JourneyViewer({
+  videoEnded = false,
+  onVideoEnded,
+  onVideoRestart,
+  onScrollDownClick,
+}) {
   const videoRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -16,6 +21,9 @@ export default function JourneyViewer() {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(60.82);
   const [is2x, setIs2x] = useState(false);
+  const [localEnded, setLocalEnded] = useState(false);
+
+  const isEnded = videoEnded || localEnded;
 
   const longPressTimerRef = useRef(null);
   const isLongPressActiveRef = useRef(false);
@@ -63,6 +71,10 @@ export default function JourneyViewer() {
 
     const handleTimeUpdate = () => {
       setCurrentTime(video.currentTime);
+      if (video.duration && video.currentTime >= video.duration - 0.6) {
+        setLocalEnded(true);
+        onVideoEnded?.();
+      }
     };
 
     video.addEventListener('loadedmetadata', handleLoadedMetadata);
@@ -86,7 +98,12 @@ export default function JourneyViewer() {
     const clamped = Math.max(0, Math.min(video.duration || 60.82, targetTime));
     video.currentTime = clamped;
     setCurrentTime(clamped);
-  }, []);
+    if (clamped < (video.duration || 60.82) - 1.5) {
+      setLocalEnded(false);
+      onVideoRestart?.();
+      video.play().catch(() => {});
+    }
+  }, [onVideoRestart]);
 
   // Long-press detection to trigger 2x playback speed
   const handlePointerDown = useCallback((e) => {
@@ -212,7 +229,9 @@ export default function JourneyViewer() {
       role="button"
       aria-label="Toggle playback"
       style={{ WebkitTouchCallout: 'none', userSelect: 'none' }}
-      className="relative w-screen h-[100dvh] overflow-hidden bg-black select-none flex items-center justify-center cursor-pointer outline-none touch-none"
+      className={`relative w-screen h-[100dvh] overflow-hidden bg-black select-none flex items-center justify-center cursor-pointer outline-none ${
+        isEnded ? 'touch-pan-y' : 'touch-none'
+      }`}
     >
       {/* 
         Max View Presentation:
@@ -263,13 +282,44 @@ export default function JourneyViewer() {
             ref={videoRef}
             src="/journey_full_sequence.mp4?v=pont_des_arts_v9"
             autoPlay
-            loop
             muted
             playsInline
             preload="auto"
+            onEnded={() => {
+              setLocalEnded(true);
+              onVideoEnded?.();
+            }}
             className="w-full h-full object-cover pointer-events-none"
           />
         </div>
+
+        {/* Animated Scroll Down indicator - appears after video ends */}
+        {isEnded && (
+          <div className="absolute bottom-6 md:bottom-8 z-50 flex items-center justify-center pointer-events-auto">
+            <button
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.stopPropagation();
+                onScrollDownClick?.();
+              }}
+              className="flex flex-col items-center gap-1 px-5 py-2 rounded-full bg-white/20 hover:bg-white/35 backdrop-blur-md border border-white/30 text-white shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-300 animate-bounce cursor-pointer group"
+              title="Scroll down to connect"
+            >
+              <span className="text-[11px] md:text-xs font-mono font-bold tracking-widest uppercase text-white/95 drop-shadow">
+                Scroll Down
+              </span>
+              <svg
+                className="w-4 h-4 md:w-5 md:h-5 text-white group-hover:translate-y-0.5 transition-transform"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2.5"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              </svg>
+            </button>
+          </div>
+        )}
 
         {/* Discreet Flip Button for Phone Orientation (allows 90° or 270° tilt) */}
         {isPortrait && (
