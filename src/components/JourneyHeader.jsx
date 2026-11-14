@@ -4,7 +4,7 @@ export const LANDMARKS = [
   { id: 'ticket', name: 'Ticket', time: 0 },
   { id: 'flight', name: 'Flight', time: 3 },
   { id: 'louvre', name: 'Louvre', time: 13 },
-  { id: 'paris', name: 'Paris', time: 23 },
+  { id: 'eiffel', name: 'Eiffel', time: 23 },
   { id: 'seine', name: 'Seine', time: 32 },
   { id: 'palace', name: 'Palace', time: 41 },
   { id: 'aurevoir', name: 'Au Revoir', time: 51 },
