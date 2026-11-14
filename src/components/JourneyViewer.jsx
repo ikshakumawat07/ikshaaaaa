@@ -229,9 +229,7 @@ export default function JourneyViewer({
       role="button"
       aria-label="Toggle playback"
       style={{ WebkitTouchCallout: 'none', userSelect: 'none' }}
-      className={`relative w-screen h-[100dvh] overflow-hidden bg-black select-none flex items-center justify-center cursor-pointer outline-none ${
-        isEnded ? 'touch-pan-y' : 'touch-none'
-      }`}
+      className="relative w-screen h-[100dvh] overflow-hidden bg-black select-none flex items-center justify-center cursor-pointer outline-none touch-pan-y"
     >
       {/* 
         Max View Presentation:
@@ -282,6 +280,7 @@ export default function JourneyViewer({
             ref={videoRef}
             src="/journey_full_sequence.mp4?v=pont_des_arts_v9"
             autoPlay
+            loop
             muted
             playsInline
             preload="auto"
@@ -293,33 +292,31 @@ export default function JourneyViewer({
           />
         </div>
 
-        {/* Animated Scroll Down indicator - appears after video ends */}
-        {isEnded && (
-          <div className="absolute bottom-6 md:bottom-8 z-50 flex items-center justify-center pointer-events-auto">
-            <button
-              onPointerDown={(e) => e.stopPropagation()}
-              onClick={(e) => {
-                e.stopPropagation();
-                onScrollDownClick?.();
-              }}
-              className="flex flex-col items-center gap-1 px-5 py-2 rounded-full bg-white/20 hover:bg-white/35 backdrop-blur-md border border-white/30 text-white shadow-[0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-300 animate-bounce cursor-pointer group"
-              title="Scroll down to connect"
+        {/* Modern, Attractive Floating Scroll to Connect Prompt - Available at any time */}
+        <div className="absolute bottom-5 md:bottom-7 z-50 flex items-center justify-center pointer-events-auto select-none">
+          <button
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              onScrollDownClick?.();
+            }}
+            className="flex items-center gap-2 px-4 py-1.5 md:py-2 rounded-full bg-black/45 hover:bg-black/65 backdrop-blur-md border border-white/20 hover:border-pink-300/60 text-white shadow-[0_8px_25px_rgba(0,0,0,0.5)] transition-all duration-300 cursor-pointer group hover:scale-105"
+            title="Scroll down to connect"
+          >
+            <span className="text-xs md:text-sm font-curly font-bold tracking-wide text-pink-200 group-hover:text-white transition-colors drop-shadow">
+              scroll to connect
+            </span>
+            <svg
+              className="w-3.5 h-3.5 md:w-4 md:h-4 text-pink-300 group-hover:text-white group-hover:translate-y-0.5 transition-all animate-bounce"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth="2.5"
             >
-              <span className="text-[11px] md:text-xs font-mono font-bold tracking-widest uppercase text-white/95 drop-shadow">
-                Scroll Down
-              </span>
-              <svg
-                className="w-4 h-4 md:w-5 md:h-5 text-white group-hover:translate-y-0.5 transition-transform"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2.5"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-              </svg>
-            </button>
-          </div>
-        )}
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+            </svg>
+          </button>
+        </div>
 
         {/* Discreet Flip Button for Phone Orientation (allows 90° or 270° tilt) */}
         {isPortrait && (

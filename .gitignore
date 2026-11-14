@@ -16,7 +16,8 @@ build/
 
 # Reference scratch assets
 _astro/
-fonts/
+/fonts/
+!public/fonts/
 generate_frames.js
 icons/
 images/

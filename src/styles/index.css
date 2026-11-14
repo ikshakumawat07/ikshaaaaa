@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'JustLikeHeaven';
+  src: url('/fonts/just-like-heaven.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-curly {
+  font-family: 'JustLikeHeaven', 'Comfortaa', cursive, sans-serif;
+}
+
 @layer base {
   * {
     margin: 0;

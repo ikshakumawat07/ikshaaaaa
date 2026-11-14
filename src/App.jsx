@@ -17,9 +17,7 @@ export default function App() {
 
   return (
     <div
-      className={`relative w-screen h-screen bg-black text-cream selection:bg-lavender/30 selection:text-white ${
-        videoEnded ? 'overflow-y-auto' : 'overflow-hidden'
-      } overflow-x-hidden scroll-smooth snap-y snap-mandatory no-scrollbar`}
+      className="relative w-screen h-screen bg-black text-cream selection:bg-lavender/30 selection:text-white overflow-y-auto overflow-x-hidden scroll-smooth snap-y snap-mandatory no-scrollbar"
     >
       <section ref={journeyRef} className="relative w-full h-[100dvh] snap-start shrink-0">
         <JourneyViewer
