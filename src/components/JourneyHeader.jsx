@@ -52,7 +52,7 @@ export default function JourneyHeader({
       </div>
 
       {/* Discreet Minimal Timestamp Landmarks at Top Center */}
-      <div className="absolute top-2 inset-x-0 z-40 flex items-center justify-center px-2 pointer-events-none select-none">
+      <div className="absolute top-3 md:top-4 inset-x-0 z-40 flex items-center justify-center px-2 pt-[env(safe-area-inset-top,0px)] pointer-events-none select-none">
         <div className="pointer-events-auto flex items-center gap-1 md:gap-1.5 px-2.5 md:px-3 py-1 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-md border border-white/10 shadow-lg overflow-x-auto no-scrollbar max-w-[96%] md:max-w-full transition-all">
           {LANDMARKS.map((lm, idx) => {
             const nextTime = LANDMARKS[idx + 1]?.time || duration;
