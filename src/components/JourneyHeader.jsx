@@ -26,6 +26,7 @@ export default function JourneyHeader({
   const progressPercent = duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
 
   const handleLineClick = (e) => {
+    e.stopPropagation();
     if (!lineRef.current || duration <= 0) return;
     const rect = lineRef.current.getBoundingClientRect();
     const clickX = e.clientX - rect.left;

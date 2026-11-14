@@ -81,10 +81,34 @@ export default function JourneyViewer() {
     setCurrentTime(clamped);
   }, []);
 
+  // Seamless invisible tap/click to pause and resume playback
+  const togglePlay = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      video.play().catch(() => {});
+    } else {
+      video.pause();
+    }
+  }, []);
+
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === ' ' || e.key === 'Enter') {
+      e.preventDefault();
+      togglePlay();
+    }
+  }, [togglePlay]);
+
   return (
     <div
       ref={containerRef}
-      className="relative w-screen h-[100dvh] overflow-hidden bg-black select-none flex items-center justify-center"
+      onClick={togglePlay}
+      onKeyDown={handleKeyDown}
+      tabIndex={0}
+      role="button"
+      aria-label="Toggle playback"
+      className="relative w-screen h-[100dvh] overflow-hidden bg-black select-none flex items-center justify-center cursor-pointer outline-none"
     >
       {/* 
         Max View Presentation:
